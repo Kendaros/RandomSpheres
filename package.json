@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npm run start:server & npm run watch",
     "start:server": "node ./bin/start-server.js",
-    "build": "browserify -t [ babelify ] app/ -o static/js/main.js && uglifyjs --screw-ie8 static/js/main.js -c -o static/js/main.js",
+    "build": "browserify -t [ babelify ] app/ -o static/js/main.js && uglifyjs --screw-ie8 static/js/main.js -c -m -o static/js/main.js",
     "watch": "watchify -d -t [ babelify ] app/ -o static/js/main.js"
   },
   "author": "Jacky Fong",
@@ -21,7 +21,7 @@
     "browser-sync": "^2.10.0",
     "browserify": "^12.0.1",
     "browserify-shader": "^0.1.2",
-    "uglify-js": "^2.5.0",
+    "uglify-js": "^2.6.2",
     "watchify": "^3.6.0"
   },
   "browserify": {
