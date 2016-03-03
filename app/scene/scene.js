@@ -13,7 +13,7 @@ class Scene {
     this.height = window.innerHeight
     
 
-    this.renderer = new THREE.WebGLRenderer( this.width, this.height, { antialias: true } )
+    this.renderer = new THREE.WebGLRenderer( this.width, this.height, { antialias: true } );
     this.camera = new THREE.PerspectiveCamera( 45, this.width / this.height, 1, 2000 ) 
     this.scene = new THREE.Scene()
 
@@ -24,7 +24,7 @@ class Scene {
     
     this.renderer.setSize( this.width, this.height )
 
-    this.camera.position.z = 1000
+    this.camera.position.z = 1100
 
   }
 

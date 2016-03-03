@@ -1,10 +1,7 @@
 import Dat from 'dat-gui';
 import NumberUtils from './utils/number-utils';
 import Scene from './scene/scene';
-
-import cubeVS from './shaders/cube/cube.vert';
-import cubeFS from './shaders/cube/cube.frag';
-
+import TrackballControls from './lib/TrackballControls';
 
 class App {
 
@@ -16,6 +13,15 @@ class App {
         this.width = window.innerWidth;
         this.height = window.innerHeight;
 
+        this.numberOfSpheres = 60;
+        this.maxSphereSize = 100;
+        this.distanceOfExplosion = [-250, 250];
+
+        this.cameraMaxZoom = 1100;
+        this.cameraMinZoom = 1400;
+
+        this.cameraReachedMinZoom = false;
+
         this.scene = new Scene();
         this.container = new THREE.Object3D();//create an empty container
 
@@ -23,7 +29,7 @@ class App {
         root.appendChild(this.scene.renderer.domElement);
 
 
-        for (var i = 0; i < 10; i ++) {
+        for (var i = 0; i < this.numberOfSpheres; i ++) {
             this.addSphere();
         }
 
@@ -31,8 +37,8 @@ class App {
 
         //this.addPointLight();
 
-        this.addAmbientLight();
-        this.addDirectionalLight();
+        //this.addAmbientLight();
+        //this.addDirectionalLight();
 
         this.addListeners();
 
@@ -50,54 +56,28 @@ class App {
     }
 
     /**
-     * Add cube to the scene
-     */
-    addCube() {
-
-        const uniforms = {
-            u_time: {type: 'f', value: '1.0'},
-            u_resolution: {type: 'v2', value: new THREE.Vector2(0, 0)}
-        };
-
-        const geometry = new THREE.BoxGeometry( 20, 20, 20 );
-
-        const material = new THREE.ShaderMaterial({
-            uniforms,
-            vertexShader: cubeVS(),
-            fragmentShader: cubeFS()
-        });
-
-        this.mesh = new THREE.Mesh(geometry, material);
-        this.mesh.position.set(Math.random() * 500, Math.random() * 500, Math.random() * 500);
-
-        this.cubeContainer.add(this.mesh);
-
-    }
-
-    /**
      * Add sphere to the scene
      */
     addSphere() {
 
-        const geometry = new THREE.SphereGeometry (100, 20, 20);
+        const geometry = new THREE.SphereGeometry (Math.random() * this.maxSphereSize, 30, 30);
 
-        let random = Math.random();
+        //let random = Math.random();
+        //
+        //if (random < .3 ) {
+        //    this.sphereColor = 0xCC0000;
+        //} else if (random < .6 && random ) {
+        //    this.sphereColor = 0xFFFFFF;
+        //} else {
+        //    this.sphereColor = 0x2E2E2E;
+        //}
 
-        if (random < .3 ) {
-            this.sphereColor = 0xCC0000;
-        } else if (random < .6 && random ) {
-            this.sphereColor = 0xFFFFFF;
-        } else {
-            this.sphereColor = 0x2E2E2E;
-        }
-
-        const material = new THREE.MeshPhongMaterial(
+        const material = new THREE.MeshDepthMaterial(
             {
-                color: this.sphereColor
             });
 
         this.mesh = new THREE.Mesh(geometry, material);
-        this.mesh.position.set(NumberUtils.getRandomArbitrary(-200, 200), NumberUtils.getRandomArbitrary(-200, 200),NumberUtils.getRandomArbitrary(-200, 200));
+        this.mesh.position.set(NumberUtils.getRandomArbitrary(this.distanceOfExplosion[0], this.distanceOfExplosion[1]), NumberUtils.getRandomArbitrary(this.distanceOfExplosion[0], this.distanceOfExplosion[1]), NumberUtils.getRandomArbitrary(this.distanceOfExplosion[0], this.distanceOfExplosion[1]));
 
         this.container.add(this.mesh);
 
@@ -140,6 +120,26 @@ class App {
         this.container.rotation.x += .005;
         this.container.rotation.y += .005;
         this.container.rotation.z += .005;
+
+        if (this.cameraReachedMinZoom == false){
+            if (this.scene.camera.position.z > this.cameraMinZoom - 100) {
+                this.scene.camera.position.z += 0.5;
+            } else {
+                this.scene.camera.position.z += 1;
+            }
+        } else {
+            if (this.scene.camera.position.z < this.cameraMaxZoom + 100) {
+                this.scene.camera.position.z += 0.5;
+            } else {
+                this.scene.camera.position.z -= 1;
+            }
+        }
+
+        if (this.scene.camera.position.z > this.cameraMinZoom) {
+            this.cameraReachedMinZoom = true;
+        } else if (this.scene.camera.position.z < this.cameraMaxZoom) {
+            this.cameraReachedMinZoom = false;
+        }
 
         this.scene.controls.update(this.DELTA_TIME);
 
