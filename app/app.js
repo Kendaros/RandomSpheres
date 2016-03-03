@@ -22,6 +22,10 @@ class App {
 
         this.cameraReachedMinZoom = false;
 
+        document.addEventListener('mousemove', this.onDocumentMouseMove.bind(this), false);
+        this.mouseX = 0;
+        this.mouseY = 0;
+
         this.scene = new Scene();
         this.container = new THREE.Object3D();//create an empty container
 
@@ -29,7 +33,7 @@ class App {
         root.appendChild(this.scene.renderer.domElement);
 
 
-        for (var i = 0; i < this.numberOfSpheres; i ++) {
+        for (var i = 0; i < this.numberOfSpheres; i++) {
             this.addSphere();
         }
 
@@ -60,7 +64,7 @@ class App {
      */
     addSphere() {
 
-        const geometry = new THREE.SphereGeometry (Math.random() * this.maxSphereSize, 30, 30);
+        const geometry = new THREE.SphereGeometry(Math.random() * this.maxSphereSize, 30, 30);
 
         //let random = Math.random();
         //
@@ -73,8 +77,7 @@ class App {
         //}
 
         const material = new THREE.MeshDepthMaterial(
-            {
-            });
+            {});
 
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.position.set(NumberUtils.getRandomArbitrary(this.distanceOfExplosion[0], this.distanceOfExplosion[1]), NumberUtils.getRandomArbitrary(this.distanceOfExplosion[0], this.distanceOfExplosion[1]), NumberUtils.getRandomArbitrary(this.distanceOfExplosion[0], this.distanceOfExplosion[1]));
@@ -84,14 +87,14 @@ class App {
     }
 
     addAmbientLight() {
-        var light = new THREE.AmbientLight( 0x404040); // soft white light
+        var light = new THREE.AmbientLight(0x404040); // soft white light
         this.scene.add(light);
     }
 
     addDirectionalLight() {
-        var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
-        directionalLight.position.set( 15, 20, 30 );
-        this.scene.add( directionalLight );
+        var directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(15, 20, 30);
+        this.scene.add(directionalLight);
     }
 
     addPointLight() {
@@ -121,7 +124,7 @@ class App {
         this.container.rotation.y += .005;
         this.container.rotation.z += .005;
 
-        if (this.cameraReachedMinZoom == false){
+        if (this.cameraReachedMinZoom == false) {
             if (this.scene.camera.position.z > this.cameraMinZoom - 100) {
                 this.scene.camera.position.z += 0.5;
             } else {
@@ -141,9 +144,22 @@ class App {
             this.cameraReachedMinZoom = false;
         }
 
+        this.scene.camera.position.x += ( this.mouseX - this.scene.camera.position.x ) * .05;
+        this.scene.camera.position.y = THREE.Math.clamp(this.scene.camera.position.y + ( -this.mouseY - this.scene.camera.position.y ) * .05, 0, 1000);
+
+        this.scene.camera.lookAt(this.scene.scene.position);
+
+
         this.scene.controls.update(this.DELTA_TIME);
 
         this.scene.render()
+
+    }
+
+    onDocumentMouseMove(event) {
+
+        this.mouseX = ( event.clientX - window.innerWidth / 2 );
+        this.mouseY = ( event.clientY - window.innerHeight / 2 );
 
     }
 
