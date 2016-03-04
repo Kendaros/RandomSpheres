@@ -150,7 +150,7 @@ class App {
         this.scene.camera.lookAt(this.scene.scene.position);
 
 
-        this.scene.controls.update(this.DELTA_TIME);
+        //this.scene.controls.update(this.DELTA_TIME);
 
         this.scene.render()
 

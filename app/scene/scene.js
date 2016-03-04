@@ -13,13 +13,13 @@ class Scene {
     this.height = window.innerHeight
     
 
-    this.renderer = new THREE.WebGLRenderer( this.width, this.height, { antialias: true } );
+    this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha:false } );
     this.camera = new THREE.PerspectiveCamera( 45, this.width / this.height, 1, 2000 ) 
     this.scene = new THREE.Scene()
 
 
-    this.controls = new THREE.TrackballControls( this.camera );
-    this.controls.target.set( 0, 0, 0 );
+    //this.controls = new THREE.TrackballControls( this.camera );
+    //this.controls.target.set( 0, 0, 0 );
 
     
     this.renderer.setSize( this.width, this.height )
